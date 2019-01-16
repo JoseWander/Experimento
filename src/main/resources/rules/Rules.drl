@@ -61,11 +61,11 @@ function int domingoFeriado(Date date) {
 
 rule "excessoNumSinistros" lock-on-active
     when
-        s : Sinistro(txSinistroPessoa>=0.19 || txSinistroFamilia>=0.26)
+        s : Sinistro(txSinistroPessoa>0.1888D || txSinistroFamilia>0.2333D)
     then
-    	//System.out.println("rule excessoNumSinistros para " + s.getCodDocumento()  );
+    	System.out.println("rule excessoNumSinistros para " + s.getCodDocumento()  );
     	modify ( s )  { 
-    		setScore(s.getScore() + 1) 
+    		setScore(s.getScore() + 2) 
     	}
 end
 
@@ -74,48 +74,27 @@ rule "valMediaProcedimento" lock-on-active
     when
         s : Sinistro(valItem<=valMediaProcedimento)
     then
-    	//System.out.println("rule valMediaProcedimento para " + s.getCodDocumento() );
+    	System.out.println("rule valMediaProcedimento para " + s.getCodDocumento() );
     	modify ( s )  { 
-    		setScore(s.getScore() + 1) 
+    		setScore(s.getScore() + 2) 
     	}
 end	
 
 
-/*
-rule "codPlano" lock-on-active
-    when
-        s : Sinistro(getBeneficiario().getCodPlano()==301 || getBeneficiario().getCodPlano()==9674 )
-    then
-    	//System.out.println("rule codProduto para " + s.getCodDocumento() );
-    	modify ( s )  { 
-    		setScore(s.getScore() + 1) 
-    	}
-end	
-		
-rule "codServico" lock-on-active
-    when
-        s : Sinistro(codServico==10014L || codServico==25535013L )
-    then
-    	//System.out.println("rule codServico para " + s.getCodDocumento() );
-    	modify ( s )  { 
-    		setScore(s.getScore() + 1) 
-    	}
-end	
-*/
 
 rule "probalidadeParcelamento" lock-on-active
     when
     	 s : Sinistro(
-    	 (txSinistroPessoa>=0.19 || txSinistroFamilia>=0.26)
+    	 (txSinistroPessoa>0.1888D || txSinistroFamilia>0.2333D)
     	&& (getBeneficiario().getCodPlano()==301 || getBeneficiario().getCodPlano()==9674 )
     	&& (codServico==10014L || codServico==25535013L )
         && (valItem<=valMediaProcedimento)
         )
     then
-    	//System.out.println("rule probalidadeParcelamento para " + s.getCodDocumento() );
+    	System.out.println("rule probalidadeParcelamento para " + s.getCodDocumento() );
     	modify ( s )  { 
     		setProbalidadeParcelamento(true),
-    		setScore(s.getScore() + 5) 
+    		setScore(s.getScore() + 2) 
     	}
 end	
 
@@ -129,7 +108,7 @@ rule "numCrmExecInativo" lock-on-active
         || getMedico().getStatusCrm()=="FALECIDO"
         )
     then
-    	//System.out.println("rule numCrmExecInativo para " + s.getCodDocumento()   );
+    	System.out.println("rule numCrmExecInativo para " + s.getCodDocumento()   );
     	modify ( s )  { 
     		setScore(s.getScore() + 1) 
     	}
@@ -139,7 +118,7 @@ rule "difDias" lock-on-active
     when
         s : Sinistro( difDias(getBeneficiario().getDatAdesaoPlano(), datAtendimento) <=90)
     then
-    	//System.out.println("rule difDias para " + s.getCodDocumento()  );
+    	System.out.println("rule difDias para " + s.getCodDocumento()  );
     	modify ( s )  { 
     		setScore(s.getScore() + 1) 
     	}
@@ -149,7 +128,7 @@ rule "consulta domingoFeriado" lock-on-active
     when
         s : Sinistro(domingoFeriado(datAtendimento)==1 && codServico==10014L)
     then
-    	//System.out.println("rule consulta domingoFeriado para " + s.getCodDocumento()  );
+    	System.out.println("rule consulta domingoFeriado para " + s.getCodDocumento()  );
     	modify ( s )  { 
     		setScore(s.getScore() + 1) 
     	}
@@ -163,63 +142,28 @@ rule "difEstados crm" lock-on-active
         	&& (getBeneficiario().getSigUfCorresp() != getMedico().getSigUfCrmExec())
         )
     then
-    	//System.out.println("rule difEstados para " + s.getCodDocumento() + " "  + s.getBeneficiario().getSigUfCorresp() + "-" +  s.getMedico().getSigUfCrmExec() );
+    	System.out.println("rule difEstados para " + s.getCodDocumento() + " "  + s.getBeneficiario().getSigUfCorresp() + "-" +  s.getMedico().getSigUfCrmExec() );
     	modify ( s )  { 
     		setScore(s.getScore() + 1) 
     	}
 end
-
-/*
-rule "codEmpresa" lock-on-active
-    when
-        s : Sinistro(getBeneficiario().getCodEmpresa()=="36875" || getBeneficiario().getCodEmpresa()=="81704")
-    then
-    	//System.out.println("rule codEmpresa para " + s.getCodDocumento()   );
-    	modify ( s )  { 
-    		setScore(s.getScore() + 1) 
-    	}
-end	
-
-rule "cnpjCpfPrestador" lock-on-active
-    when
-        s : Sinistro(getPrestador().getCnpjCpfPrestador()==9893114810L
-        || getPrestador().getCnpjCpfPrestador()==13524320000192L
-        || getPrestador().getCnpjCpfPrestador()==29491463845L)
-    then
-    	//System.out.println("rule cnpjCpfPrestador para " + s.getCodDocumento()   );
-    	modify ( s )  { 
-    		setScore(s.getScore() + 1) 
-    	}
-end	
-
-
-rule "getCodFamiliarBenef" lock-on-active
-    when
-        s : Sinistro(getBeneficiario().getCodFamiliarBenef()=="000008490" || getBeneficiario().getCodFamiliarBenef()=="368750020")
-    then
-    	//System.out.println("rule getCodFamiliarBenef para " + s.getCodDocumento()   );
-    	modify ( s )  { 
-    		setScore(s.getScore() + 1) 
-    	}
-end	
-*/
 
 
 //calc probabilidade
 
 rule "probalidadeMedia" salience 10   
     when 
- 	  	 s: Sinistro(score >=4 && score <7)
+ 	  	 s: Sinistro(score >=2 && score <6)
     then
-    	//System.out.println("rule probalidadeMedia para " + s.getCodDocumento() + " score " + s.getScore());
+    	System.out.println("rule probalidadeMedia para " + s.getCodDocumento() + " score " + s.getScore());
 		s.setProbalidadeFraude("MEDIA") ;
 end	
 
 rule "probalidadeAlta"  salience 10 
     when 
- 	  	 s: Sinistro(score >=7)
+ 	  	 s: Sinistro(score >=6)
     then
-    	//System.out.println("rule probalidadeAlta para " + s.getCodDocumento() + " score " + s.getScore());
+    	System.out.println("rule probalidadeAlta para " + s.getCodDocumento() + " score " + s.getScore());
 		s.setProbalidadeFraude("ALTA") ;
 end	
 

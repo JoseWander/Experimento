@@ -174,7 +174,7 @@ public class ManipuladorCsv {
 	public void writeCsvSinistros3(List<Sinistro> sinistros, String arquivo)
 			throws IOException, URISyntaxException, ParseException {
 
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		
 		CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader(
 				"codSinistro","codDocumento","datInclusao","qtdServCobrada","valItem","codSituacaoItem",
 				"cnpjCpfPrestador","codServico","codEmpresa","codFamiliarBenef","codRdp","qtdIdadeSegurado",
@@ -182,7 +182,7 @@ public class ManipuladorCsv {
 				"numCrmExec","statusCrm","codItem","codBeneficiario","idcTipoAtend","flgSitEmergencia",
 				"idcTipoInternacao","flgInternacao", "flgConsulta","datAdesaoPlano","datExclusaoPlano",
 				"datAtendimento","cpfBenef","codSeqPagamento","txSinistroPessoa","txSinistroFamilia",
-				"valMediaProcedimento", "probalidadeParcelamento", "probalidadeFraude","score","flgFraude").withQuoteMode(QuoteMode.NON_NUMERIC);
+				"valMediaProcedimento", "probalidadeParcelamento", "probalidadeFraude","score","flgFraude").withQuoteMode(QuoteMode.ALL);
 
 		BufferedWriter writer = Files
 				.newBufferedWriter(Paths

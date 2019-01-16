@@ -29,7 +29,7 @@ public class ProcessadorDrools {
 
 			System.out.println("lendo arquivo");
 			
-			List<Sinistro> sinistros = manipuladorCsv.readCsvSinistros2(0,"sinistros_2.2.csv");
+			List<Sinistro> sinistros = manipuladorCsv.readCsvSinistros2(0,"sinistros_2.csv");
 			
 			System.out.println(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - ini.getTime()) + " segs");
 			ini.setTime(System.currentTimeMillis());
@@ -37,7 +37,7 @@ public class ProcessadorDrools {
 			System.out.println("inserindo kSession");
 			
 			for (Sinistro sinistro : sinistros) {
-				//if(sinistro.getFraude()==1)
+				//if(sinistro.getCodSinistro()==1023816 || sinistro.getCodSinistro()==1076832)
 				kSession.insert(sinistro);
 			}
 
@@ -48,6 +48,7 @@ public class ProcessadorDrools {
 			
 			kSession.fireAllRules();
 
+			System.out.println("*********************************************");
 			
 			int count=0;
 			int contScore=0;		
@@ -63,13 +64,14 @@ public class ProcessadorDrools {
 				}
 			}
 			
+			System.out.println("*********************************************");
 			System.out.println((double)contScore/count);
 			
 			
 			 count=0;
 			 contScore=0;		
 			for (Sinistro sinistro : sinistros) {
-				if(!sinistro.isFlgFraude() && !sinistro.getProbalidadeFraude().equals("BAIXA")){
+				if(!sinistro.isFlgFraude() && sinistro.getProbalidadeFraude().equals("ALTA")){
 					count++;
 					contScore=contScore+sinistro.getScore();
 					System.out.println("codSinistro " + sinistro.getCodSinistro() 
@@ -81,16 +83,12 @@ public class ProcessadorDrools {
 
 			
 			System.out.println((double)contScore/count);
-	
-			
-			
-			
-			
+				
 			System.out.println(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - ini.getTime()) + " segs");
 			ini.setTime(System.currentTimeMillis());
 			
 			System.out.println("escrevendo arquivo");
-			manipuladorCsv.writeCsvSinistros3(sinistros,"sinistros_3.2.csv");
+			manipuladorCsv.writeCsvSinistros3(sinistros,"sinistros_3.csv");
 			
 			System.out.println(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - ini.getTime()) + " segs");
 			System.out.println("fim");
